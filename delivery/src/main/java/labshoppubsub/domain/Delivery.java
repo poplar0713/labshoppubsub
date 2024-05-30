@@ -1,11 +1,13 @@
 package labshoppubsub.domain;
 
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.PostPersist;
+import javax.persistence.Table;
+
 import labshoppubsub.DeliveryApplication;
-import labshoppubsub.domain.DeliveryAdded;
 import lombok.Data;
 
 @Entity
@@ -17,16 +19,10 @@ public class Delivery {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    private Long productId;
-
-    private String status;
-
-    private String productName;
-
+    private String productId;
     private Integer qty;
-
-    private Long customerId;
+    private String customerId;
+    private String status;
 
     @PostPersist
     public void onPostPersist() {
@@ -43,7 +39,13 @@ public class Delivery {
 
     //<<< Clean Arch / Port Method
     public static void addDelivery(OrderPlaced orderPlaced) {
-        //implement business logic here:
+        Delivery delivery = new Delivery();
+        delivery.setCustomerId(orderPlaced.getCustomerId());
+        delivery.setProductId(orderPlaced.getProductId());
+        delivery.setQty(orderPlaced.getQty());
+
+        delivery.setStatus("Delivery started");
+        repository().save(delivery);
 
         /** Example 1:  new item 
         Delivery delivery = new Delivery();
@@ -61,7 +63,6 @@ public class Delivery {
 
          });
         */
-
     }
     //>>> Clean Arch / Port Method
 
